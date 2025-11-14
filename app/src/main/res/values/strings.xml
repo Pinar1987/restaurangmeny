@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">restaurangmeny</string>
+    <string name="pinar_buffet">Pinar Buffet</string>
+    <string name="maincourses">Maincourses</string>
+    <string name="desserts">Desserts</string>
+    <string name="dishes1">dishes1</string>
+    <string name="dishes2">dishes2</string>
+    <string name="dishes3">dishes3</string>
+</resources>

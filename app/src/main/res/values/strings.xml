@@ -6,4 +6,8 @@
     <string name="dishes1">dishes1</string>
     <string name="dishes2">dishes2</string>
     <string name="dishes3">dishes3</string>
+    <string name="order">Order</string>
+    <string name="total">Total:</string>
+    <string name="_0_kr">0 kr</string>
+    <string name="köp">Beställ</string>
 </resources>

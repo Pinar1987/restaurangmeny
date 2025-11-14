@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             updateMenu(desserts)
         }
 
-        // Show appetizers by default
+
         updateMenu(appetizers)
     }
 

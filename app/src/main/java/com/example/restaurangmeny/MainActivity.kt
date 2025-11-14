@@ -1,6 +1,5 @@
 package com.example.restaurangmeny
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -69,13 +68,13 @@ class MainActivity : AppCompatActivity() {
             shoppingCart.add(CartItem(dish, quantity))
         }
         updateTotalCost()
-        Toast.makeText(this, "$quantity ${dish.name} har lagts till", Toast.LENGTH_SHORT).show()
+        val toastMessage = getString(R.string.added_to_cart_format, quantity, dish.name)
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateTotalCost() {
         var total = 0.0
         shoppingCart.forEach { total += it.dish.price * it.quantity }
-        totalCostTextView.text = "$total kr"
+        totalCostTextView.text = getString(R.string.price_format, total)
     }
 }

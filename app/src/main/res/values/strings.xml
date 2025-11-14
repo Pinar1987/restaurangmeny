@@ -10,4 +10,6 @@
     <string name="total">Total:</string>
     <string name="_0_kr">0 kr</string>
     <string name="köp">Beställ</string>
+    <string name="price_format">%.2f kr</string>
+    <string name="added_to_cart_format">%d %s har lagts till</string>
 </resources>

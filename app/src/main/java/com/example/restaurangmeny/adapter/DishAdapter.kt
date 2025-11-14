@@ -1,5 +1,6 @@
 package com.example.restaurangmeny.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,10 +37,13 @@ class DishAdapter(
     override fun onBindViewHolder(holder: DishViewHolder, position: Int) {
         val dish = dishList[position]
         var currentQuantity = 1
+        val context = holder.itemView.context
 
+        // Set text views correctly and use string resources
         holder.dishName.text = dish.name
         holder.dishDescription.text = dish.description
-        holder.dishPrice.text = "${dish.price} kr"
+        holder.dishPrice.text = context.getString(R.string.price_format, dish.price)
+
         holder.dishImage.setImageResource(dish.image)
         holder.quantityText.text = currentQuantity.toString()
 
@@ -62,6 +66,7 @@ class DishAdapter(
 
     override fun getItemCount() = dishList.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(dishes: List<Dish>) {
         dishList = dishes
         notifyDataSetChanged()

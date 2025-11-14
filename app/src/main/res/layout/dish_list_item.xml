@@ -47,11 +47,17 @@
             android:layout_marginTop="8dp"
             android:gravity="center_vertical">
 
-            <Button
+            <TextView
                 android:id="@+id/minus_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="-" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/decrease"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/quantity_text"
@@ -59,13 +65,20 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="1" />
+                android:text="1"
+                android:textSize="20sp" />
 
-            <Button
+            <TextView
                 android:id="@+id/plus_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="+" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/increase"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
             <View
                 android:layout_width="0dp"
@@ -76,7 +89,7 @@
                 android:id="@+id/add_to_cart_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lägg till" />
+                android:text="@string/add_to_cart" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

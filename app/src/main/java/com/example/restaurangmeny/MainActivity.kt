@@ -1,80 +1,58 @@
 package com.example.restaurangmeny
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.example.restaurangmeny.adapter.DishAdapter
 import com.example.restaurangmeny.data.DataSource
-import com.example.restaurangmeny.data.Dish
-
-data class CartItem(val dish: Dish, var quantity: Int)
+import com.example.restaurangmeny.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private val shoppingCart = mutableListOf<CartItem>()
-    private lateinit var totalCostTextView: TextView
-    private lateinit var dishAdapter: DishAdapter
+    private val viewModel: MenuViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        totalCostTextView = findViewById(R.id.total_cost_textview)
-        val dishRecyclerView = findViewById<RecyclerView>(R.id.dish_recycler_view)
-
-        dishAdapter = DishAdapter { dish, quantity ->
-            addToCart(dish, quantity)
+        val dishAdapter = DishAdapter { dish, quantity ->
+            viewModel.addToCart(dish, quantity)
+            val toastMessage = getString(R.string.added_to_cart_format, quantity, dish.name)
+            Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
         }
-        dishRecyclerView.adapter = dishAdapter
 
-        val appetizersButton = findViewById<Button>(R.id.appetizers_button)
-        val mainCoursesButton = findViewById<Button>(R.id.main_courses_button)
-        val dessertsButton = findViewById<Button>(R.id.desserts_button)
+        binding.dishRecyclerView.adapter = dishAdapter
 
-        appetizersButton.setOnClickListener {
+        viewModel.totalCost.observe(this) { newTotal ->
+            binding.totalCostTextview.text = getString(R.string.price_format, newTotal)
+        }
+
+        binding.appetizersButton.setOnClickListener {
             dishAdapter.submitList(DataSource.appetizers)
         }
 
-        mainCoursesButton.setOnClickListener {
+        binding.mainCoursesButton.setOnClickListener {
             dishAdapter.submitList(DataSource.mainCourses)
         }
 
-        dessertsButton.setOnClickListener {
+        binding.dessertsButton.setOnClickListener {
             dishAdapter.submitList(DataSource.desserts)
         }
 
         // Show appetizers by default
         dishAdapter.submitList(DataSource.appetizers)
-    }
-
-    private fun addToCart(dish: Dish, quantity: Int) {
-        val existingCartItem = shoppingCart.find { it.dish.name == dish.name }
-
-        if (existingCartItem != null) {
-            existingCartItem.quantity += quantity
-        } else {
-            shoppingCart.add(CartItem(dish, quantity))
-        }
-        updateTotalCost()
-        val toastMessage = getString(R.string.added_to_cart_format, quantity, dish.name)
-        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun updateTotalCost() {
-        var total = 0.0
-        shoppingCart.forEach { total += it.dish.price * it.quantity }
-        totalCostTextView.text = getString(R.string.price_format, total)
     }
 }

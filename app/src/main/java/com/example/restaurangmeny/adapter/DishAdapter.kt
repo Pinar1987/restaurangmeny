@@ -1,74 +1,69 @@
 package com.example.restaurangmeny.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.restaurangmeny.R
 import com.example.restaurangmeny.data.Dish
+import com.example.restaurangmeny.databinding.DishListItemBinding
 
 class DishAdapter(
     private val onAddToCartClicked: (Dish, Int) -> Unit
-) : RecyclerView.Adapter<DishAdapter.DishViewHolder>() {
+) : ListAdapter<Dish, DishAdapter.DishViewHolder>(DishDiffCallback) {
 
-    private var dishList: List<Dish> = emptyList()
+    class DishViewHolder(private val binding: DishListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    class DishViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val dishImage: ImageView = view.findViewById(R.id.dish_image)
-        val dishName: TextView = view.findViewById(R.id.dish_name)
-        val dishDescription: TextView = view.findViewById(R.id.dish_description)
-        val dishPrice: TextView = view.findViewById(R.id.dish_price)
-        val minusButton: Button = view.findViewById(R.id.minus_button)
-        val quantityText: TextView = view.findViewById(R.id.quantity_text)
-        val plusButton: Button = view.findViewById(R.id.plus_button)
-        val addToCartButton: Button = view.findViewById(R.id.add_to_cart_button)
+        fun bind(dish: Dish, onAddToCartClicked: (Dish, Int) -> Unit) {
+            var currentQuantity = 1
+            val context = binding.root.context
+
+            binding.dishName.text = dish.name
+            binding.dishDescription.text = dish.description
+            binding.dishPrice.text = context.getString(R.string.price_format, dish.price)
+            binding.dishImage.setImageResource(dish.image)
+            binding.quantityText.text = currentQuantity.toString()
+
+            // Treat the TextViews as the buttons
+            val minusButton: TextView = binding.minusButton
+            val plusButton: TextView = binding.plusButton
+
+            minusButton.setOnClickListener {
+                if (currentQuantity > 1) {
+                    currentQuantity--
+                    binding.quantityText.text = currentQuantity.toString()
+                }
+            }
+
+            plusButton.setOnClickListener {
+                currentQuantity++
+                binding.quantityText.text = currentQuantity.toString()
+            }
+
+            binding.addToCartButton.setOnClickListener {
+                onAddToCartClicked(dish, currentQuantity)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.dish_list_item, parent, false)
-        return DishViewHolder(view)
+        val binding = DishListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return DishViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: DishViewHolder, position: Int) {
-        val dish = dishList[position]
-        var currentQuantity = 1
-        val context = holder.itemView.context
-
-        // Set text views correctly and use string resources
-        holder.dishName.text = dish.name
-        holder.dishDescription.text = dish.description
-        holder.dishPrice.text = context.getString(R.string.price_format, dish.price)
-
-        holder.dishImage.setImageResource(dish.image)
-        holder.quantityText.text = currentQuantity.toString()
-
-        holder.minusButton.setOnClickListener {
-            if (currentQuantity > 1) {
-                currentQuantity--
-                holder.quantityText.text = currentQuantity.toString()
-            }
-        }
-
-        holder.plusButton.setOnClickListener {
-            currentQuantity++
-            holder.quantityText.text = currentQuantity.toString()
-        }
-
-        holder.addToCartButton.setOnClickListener {
-            onAddToCartClicked(dish, currentQuantity)
-        }
+        holder.bind(getItem(position), onAddToCartClicked)
     }
 
-    override fun getItemCount() = dishList.size
+    object DishDiffCallback : DiffUtil.ItemCallback<Dish>() {
+        override fun areItemsTheSame(oldItem: Dish, newItem: Dish): Boolean {
+            return oldItem.name == newItem.name
+        }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun submitList(dishes: List<Dish>) {
-        dishList = dishes
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: Dish, newItem: Dish): Boolean {
+            return oldItem == newItem
+        }
     }
 }
